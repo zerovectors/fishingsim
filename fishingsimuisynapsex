@@ -1,0 +1,198 @@
+if syn_checkcaller() then
+  local library = loadstring(game:HttpGet("https://pastebin.com/raw/AqZYACS7", true))()
+  local plr = game:GetService('Players').LocalPlayer
+  local mouse = plr:GetMouse()
+  local UserInput = game:GetService("UserInputService")
+  local farming = library:CreateWindow({
+    text = "Farming"
+  })
+  local character = library:CreateWindow({
+    text = "Character"
+  })
+  local miscellaneous = library:CreateWindow({
+    text = "Miscellaneous"
+  })
+  local teleports = library:CreateWindow({
+    text = "Teleports"
+  })
+  local changelog = library:CreateWindow({
+    text = "Changelog"
+  })
+
+  local credits = library:CreateWindow({text='Credits'})
+  credits:AddLabel("Credits\nInori: Dragging\nwally: UI\nsmail: Ideas, Testing")
+
+  local settings = {
+    autocatch = false;
+    autosell = false;
+    vis = true;
+    cooldown = false;
+  }
+
+  farming:AddToggle("Auto Catch", function(state)
+    if settings.autocatch == false then
+      settings.autocatch = true
+      while wait() do
+        if game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool")["Bobbers"]["Bobber"]["Fish"].Value ~= nil then
+            wait(1)
+              local Target = game:GetService("ReplicatedStorage").CloudClientResources.Communication.Events.FishCaught;
+              Target:FireServer();
+            game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool")["Bobbers"]["Bobber"]["Fish"].Value = nil
+          end
+          if settings.autocatch == false then
+            break
+          end
+        end
+    else
+      settings.autocatch = false
+    end
+    while settings.autocatch do
+    if game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")["Bobbers"]["Bobber"]["Fish"].Value ~= nil then
+    wait(1)
+    local Target = game:GetService("ReplicatedStorage").CloudClientResources.Communication.Events.FishCaught;
+    Target:FireServer();
+    game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool")["Bobbers"]["Bobber"]["Fish"].Value = nil
+    end
+    end
+  end)
+
+  farming:AddToggle("Auto Sell", function(state)
+    if settings.autosell == false then
+      settings.autosell = true
+      local pos = plr.Character.HumanoidRootPart.CFrame
+      plr.Character.HumanoidRootPart.CFrame = CFrame.new(-50.11, 51.901, -21.746)
+      while wait() do
+        for _, v in pairs(game:GetService("Players").LocalPlayer["LocalData"]["FishDiscovered"]:GetChildren()) do
+          local string_1 = tostring(v);
+          local number_1 = 1;
+          local Target = game:GetService("ReplicatedStorage").CloudClientResources.Communication.Functions.SellItem;
+          Target:InvokeServer(string_1, number_1);
+        end
+        if settings.autosell == false then
+          plr.Character.HumanoidRootPart.CFrame = pos
+          break
+        end
+      end
+    else
+      settings.autosell = false
+    end
+  end)
+
+  character:AddToggle("Super Speed", function(state)
+    game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = (state and 100 or 16)
+  end)
+
+  character:AddBox("WalkSpeed", function(object, focus)
+    if focus then
+        game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = tonumber(object.Text) or 16
+    end
+  end)
+
+  character:AddToggle("Super Jump", function(state)
+    game:GetService("Players").LocalPlayer.Character.Humanoid.JumpPower = (state and 100 or 50)
+  end)
+
+  character:AddBox("JumpPower", function(object, focus)
+    if focus then
+        game:GetService("Players").LocalPlayer.Character.Humanoid.JumpPower = tonumber(object.Text) or 50
+    end
+  end)
+
+  character:AddButton("Reset", function()
+    game:GetService("Players").LocalPlayer.Character.Humanoid.Health = 0;
+  end)
+
+  miscellaneous:AddButton("Kill Predators (Makes you rejoin\nbecause of the anti cheat)", function()
+      local pos = plr.Character.HumanoidRootPart.CFrame
+        local sharks = workspace:GetChildren()
+          for i = 1, #sharks do local v = sharks[i]
+              if v:FindFirstChild("Health") and v:FindFirstChild("IsSeaMonster") then
+                pcall(function()
+                    plr.Character.PrimaryPart.CFrame = v.PrimaryPart.CFrame + Vector3.new(0, 25, 0)
+                end)
+                wait()
+                    if plr.Character:FindFirstChildOfClass("Tool") then
+                        game.ReplicatedStorage.CloudClientResources.Communication.Events.DamageSeaMonster:FireServer(v, v.Health, true)
+                    elseif plr:FindFirstChild("Backpack") and #plr.Backpack:GetChildren() >= 1 then
+                        for _,k in pairs(plr.Backpack:GetChildren()) do
+                            if k:FindFirstChild("Damage") then
+                                k.Parent = plr.Character
+                            end
+                        end
+                    end
+                end
+            end
+        wait(2)
+      game:GetService('TeleportService'):Teleport(game.PlaceId)
+  end)
+
+  miscellaneous:AddButton("Fast Boat", function()
+      workspace:FindFirstChild(tostring(game.Players.LocalPlayer).. "'s Boat")["Controller"]["VehicleSeat"].MaxSpeed = 500
+  end)
+
+  miscellaneous:AddButton("Fuck the server (no going back,\nrejoin to stop)", function()
+      loadstring(game:HttpGet('https://raw.githubusercontent.com/zerovectors/fishing-simulator/master/fishing%20simulator%20fucker?token=AOVVJ3ESXE3HZMJ5C6P7KCS6LGWG6',true))()
+  end)
+
+  miscellaneous:AddButton2("Toggle UI Key; ' '",function()
+  	game.CoreGui.UILibrary.Miscellaneous.Container.TextButton2.Text = 'Press any Key now'
+  	local input = UserInput.InputBegan:wait()
+  	if input.UserInputType == Enum.UserInputType.Keyboard then
+  		settings.togglekey = tostring(input.KeyCode)
+  		game.CoreGui.UILibrary.Miscellaneous.Container.TextButton2.Text = "Toggle UI Key; '"..string.sub(tostring(input.KeyCode), 14).."'"
+  	else
+  		settings.togglekey = tostring(input.UserInputType)
+  		game.CoreGui.UILibrary.Miscellaneous.Container.TextButton2.Text = "Toggle UI Key; '"..string.sub(tostring(input.UserInputType), 20).."'"
+  	end
+  end)
+
+  miscellaneous:AddButton("Rejoin", function()
+    game:GetService('TeleportService'):Teleport(game.PlaceId)
+  end)
+
+  teleports:AddButton(game.Players.LocalPlayer.Name.."'s Boat", function()
+    game.Players.LocalPlayer.Character["HumanoidRootPart"].CFrame = CFrame.new(workspace:FindFirstChild(tostring(game:GetService("Players").LocalPlayer).. "'s Boat")["Controller"]["VehicleSeat"].Position + Vector3.new(0,2,0))
+  end)
+
+  teleports:AddButton("Port Jackson", function()
+    game.Players.LocalPlayer.Character["HumanoidRootPart"].CFrame = CFrame.new(-48.333, 53.183, -40.397)
+  end)
+
+  teleports:AddButton("Volcano Island", function()
+    game.Players.LocalPlayer.Character["HumanoidRootPart"].CFrame = CFrame.new(2917.799, 49.275, 1446)
+  end)
+
+  teleports:AddButton("Start Volcano Obby", function()
+    game.Players.LocalPlayer.Character["HumanoidRootPart"].CFrame = workspace["Eruption Island"].VolcanoEntrance.Entrance.CFrame
+  end)
+
+  teleports:AddButton("Complete Volcano Obby", function()
+    game.Players.LocalPlayer.Character["HumanoidRootPart"].CFrame = workspace.ObbyCompletedCheck.CFrame
+  end)
+
+  teleports:AddButton("Shadow Isles", function()
+    game.Players.LocalPlayer.Character["HumanoidRootPart"].CFrame = CFrame.new(2235, 160.575, -2399.7)
+  end)
+
+  changelog:AddLabel("V1.5 ( CURRENT VERSION )\n + Added Teleports tab\n + Added kill Predators\n + Added Boat Speed\nV1.3\n + Released UI\n + Added Fast Boat")
+
+  UserInput.InputBegan:Connect(function(input)
+    if tostring(input.KeyCode) == settings.togglekey or tostring(input.UserInputType) == settings.togglekey then
+      if settings.vis == true then
+        settings.vis = false
+        for _,v in ipairs(game.CoreGui.UILibrary:GetDescendants()) do
+          if v:IsA("Frame") then
+                v.Visible = false
+             end
+           end
+      elseif settings.vis == false then
+        settings.vis = true
+        for _,v in ipairs(game.CoreGui.UILibrary:GetDescendants()) do
+          if v:IsA("Frame") then
+                v.Visible = true
+             end
+           end
+         end
+      end
+  end)
+end
